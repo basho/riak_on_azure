@@ -40,7 +40,6 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 	![](https://raw.github.com/glickbot/riak_on_azure/master/images/vmconfiguration0.png)
 
 4. On the VM Configuration page, provide the following information:
-	
 	- Provide a Virtual Machine Name, such as "testlinuxvm".
 	- Specify a New User Name, such as "newuser", which will be added to the Sudoers 	  list file.
 	- In the New Password box, type a strong password.
@@ -51,7 +50,6 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 	![](https://raw.github.com/glickbot/riak_on_azure/master/images/vmconfiguration1.png)
 
 5. On the VM Mode page, provide the following information:
-
 	- **If this is the first node**, select the "STANDALONE VIRTUAL MACHINE" radio button. **Otherwise**, select the "CONNECT TO EXISTING VIRTUAL MACHINE" radio button, and select the first node in the drop down list.*
 	- In the DNS Name box, type a valid DNS address. For example, "testlinuxvm"
 	- In the Storage Account box, select Use Automatically Generated Storage Account.
@@ -109,8 +107,7 @@ Execute:
 
 	sudo su -
 
-	curl -s http://<location>/azure_install_riak.sh | sh
-
+	curl -s https://raw.github.com/glickbot/riak_on_azure/master/azure_install_riak.sh | sh
 
 ** FOR THE FIRST NODE **, note the "INTERNAL IP ADDRESS" listed on the right in the nodes dashboard.
 

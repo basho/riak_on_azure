@@ -1,4 +1,4 @@
-##Install Riak on Windows Azure
+##Install Riak on Windows Azure (Work in Progress)
 
 Steps to install Riak on Centos VMs using the Windows Azure platform:
 

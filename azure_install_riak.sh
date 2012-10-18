@@ -8,7 +8,7 @@ yum -y install http://s3.amazonaws.com/downloads.basho.com/riak/CURRENT/rhel/6/r
 IP=`hostname -i`
 
 perl -pi -e "s/127\.0\.0\.1/$IP/g" /etc/riak/vm.args
-perl -pi -e "s/127\.0\.0\.1/$IP/g" /etc/riak/app.
+perl -pi -e "s/127\.0\.0\.1/$IP/g" /etc/riak/app.config
 perl -pi -e 's/\{http, \[/\{http, \[\{\"127.0.0.1\",8098\},/' /etc/riak/app.config
 
 

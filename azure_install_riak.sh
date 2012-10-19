@@ -43,8 +43,9 @@ diff -uNr riak.old/app.config riak.new/app.config
              %% pb_backlog is the maximum length to which the queue of pending
 EOF
 
-riak start
-riak ping
+chkconfig --add riak
+service riak start
+service riak ping
 
 #echo "###########################################################"
 echo "Riak installation successful"

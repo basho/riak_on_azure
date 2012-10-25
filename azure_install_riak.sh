@@ -3,7 +3,8 @@
 mkdir /mnt/resource/riak
 ln -s /mnt/resource/riak /var/lib/
 
-yum -y install http://s3.amazonaws.com/downloads.basho.com/riak/1.2/1.2.1/rhel/6/riak-1.2.1-1.el6.x86_64.rpm
+yum -y install http://yum.basho.com/gpg/basho-release-6-1.noarch.rpm
+yum -y install riak
 
 IP=`hostname -i`
 
@@ -47,5 +48,4 @@ chkconfig --add riak
 service riak start
 service riak ping
 
-#echo "###########################################################"
 echo "Riak installation successful"

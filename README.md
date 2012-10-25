@@ -17,15 +17,15 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 
 2. Click preview features to view the available previews.
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/antares-iaas-preview-01.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/antares-iaas-preview-01.png)
 
 3. Scroll down to Virtual Machines & Virtual Networks and click try it now.
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/antares-iaas-preview-02.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/antares-iaas-preview-02.png)
 
 4. Select your subscription and click the check.
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/antares-iaas-preview-04.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/antares-iaas-preview-04.png)
 
 ##### Create a virtual machine running CentOS Linux
 
@@ -33,11 +33,11 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 
 2. In the Management Portal, at the bottom left of the web page, click +New, click Virtual Machine, and then click From Gallery. 
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/createvm.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/createvm.png)
 
 3. Select a CentOS virtual machine image from Platform Images, and then click the next arrow at the bottom right of the page. 
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/vmconfiguration0.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/vmconfiguration0.png)
 
 4. On the VM Configuration page, provide the following information:
 	- Provide a Virtual Machine Name, such as "testlinuxvm".
@@ -47,7 +47,7 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 	- Select the appropriate Size from the drop down list.
 	- Click the next arrow to continue.
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/vmconfiguration1.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/vmconfiguration1.png)
 
 5. On the VM Mode page, provide the following information:
 	- **If this is the first node**, select the "STANDALONE VIRTUAL MACHINE" radio button. **Otherwise**, select the "CONNECT TO EXISTING VIRTUAL MACHINE" radio button, and select the first node in the drop down list.*
@@ -56,11 +56,11 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 	- In the Region/Affinity Group/Virtual Network box, select a region where this virtual image will be hosted.
 	- Click the next arrow to continue.
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/vmconfiguration2.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/vmconfiguration2.png)
 
 6. On the VM Options page, select (none) in the Availability Set box. Click the check mark to continue. 
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/vmconfiguration3.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/vmconfiguration3.png)
 
 7. Wait while Windows Azure prepares your virtual machine.
 
@@ -95,7 +95,7 @@ If you are using a Windows computer, connect to the VM using PuTTY. PuTTY can be
 
 2. Enter the SSH DETAILS as found on the Node's Dashboard, i.e., "testlinuxvm.cloudapp.net" for the Host Name and "22" for the Port. 
 
-	![](https://raw.github.com/basho/riak_on_azure/master/images/putty.png)
+	![](https://raw.github.com/basho/riak_on_azure/1.0/images/putty.png)
 
 #### Configure Centos and Riak using a shell script
 
@@ -105,7 +105,7 @@ Execute:
 
 	sudo su -
 
-	curl -s https://raw.github.com/basho/riak_on_azure/master/azure_install_riak.sh | sh
+	curl -s https://raw.github.com/basho/riak_on_azure/1.0/azure_install_riak.sh | sh
 
 ** FOR THE FIRST NODE **, note the "INTERNAL IP ADDRESS" listed on the right in the nodes dashboard.
 

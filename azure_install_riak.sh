@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir /mnt/resource/riak
-ln -s /mnt/resource/riak /var/lib/
+ln -s /mnt/resource/riak /var/lib/riak
 
 yum -y install http://yum.basho.com/gpg/basho-release-6-1.noarch.rpm
 yum -y install riak

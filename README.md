@@ -116,13 +116,13 @@ You can either use Riak Control or Command Line to add nodes to your Riak Cluste
 	-i.e. dns: basho-example.cloudapp.net
 	-i.e. Deployment ID: 7ea145743aeb4402a088da1234567890
 
-2. Visit https://<dns>/admin in your browser
+2. Visit https://dns-name.cloudapp.net/admin in your browser
 
 3. Ender 'admin' as the username, and the "Deployement ID" as the password.
 
 4. Select 'Cluster' on the left.
 
-5. Add vms which also have the Riak software installed and configured by entering riak@<vm> in the input box, and clicking 'Add Node'
+5. Add vms which also have the Riak software installed and configured by entering riak@yourhostnamehere in the input box, and clicking 'Add Node'
 	- i.e. riak@basho-centos1
 	- ( Use the short name of each vm, not the DNS name )
 
@@ -136,9 +136,11 @@ First, SSH into the second, and subsequent nodes, and on each node:
 
 Execute:
 
-	riak-admin cluster join riak@<vm>
+	riak-admin cluster join riak@yourhostnamehere
 
-( Where <vm> is the short name of the first node )
+( Where 'yourhostnamehere' is the short name of the **first node** in your cluster )
+
+( NOTE: The host you choose can actually be any host that has already joined the cluster, the first host has no special significance, but it's important not to attempt to join a node that hasn't joined a cluster yet, or else you'll make a second cluster; thus we use the first node for these instructions. )
 
 After all the nodes have have been joined to the first node via the previous command, connect to any of the nodes via SSH or PuTTY and execute the following:
 

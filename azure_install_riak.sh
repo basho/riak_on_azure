@@ -31,6 +31,7 @@ if [ "$(id -u)" != "0" ]; then
 	exit 1
 fi
 
+
 logfile=riak_install.log
 
 OS=`lsb_release -si`
@@ -38,18 +39,28 @@ OS=`lsb_release -si`
 mkdir /mnt/resource/riak
 ln -s /mnt/resource/riak /var/lib/riak
 
+echo "Setting limits"
+ulimit -n 65536
+
+cat <<PERSISTANTLIMITS > /etc/security/limits.d/riak.conf
+root soft nofile 65536
+root hard nofile 65536
+riak soft nofile 65536
+riak hard nofile 65536
+PERSISTANTLIMITS
+
 if [ "$OS" = "CentOS" ]; then
 
 echo "Installing Basho Release Repository"
-yum -y install http://yum.basho.com/gpg/basho-release-6-1.noarch.rpm >$logfile 2>&1
+yum -y install http://yum.basho.com/gpg/basho-release-6-1.noarch.rpm >>$logfile 2>&1
 
 echo "Installing Riak"
-yum -y install riak >$logfile 2>&1
+yum -y install riak >>$logfile 2>&1
 
 elif [ "$OS" = "Ubuntu" ]; then
 
 echo "Installing Basho Release Repository"
-curl -s http://apt.basho.com/gpg/basho.apt.key | sudo apt-key add - >$logfile 2>&1
+curl -s http://apt.basho.com/gpg/basho.apt.key | sudo apt-key add - >>$logfile 2>&1
 ubuntuver=`lsb_release -sc`
 if ! curl -sf http://apt.basho.com/dists/$ubuntuver/ > /dev/null; then
 	ubuntuver='precise'
@@ -58,9 +69,9 @@ cat <<BASHOSOURCE >> /etc/apt/sources.list.d/basho.list
 deb http://apt.basho.com $ubuntuver main
 BASHOSOURCE
 
-apt-get update >$logfile 2>&1
+apt-get update >>$logfile 2>&1
 echo "Installing Riak"
-apt-get install riak >$logfile 2>&1
+apt-get install riak >>$logfile 2>&1
 
 else
 	echo "Unknown OS, this script is for Centos or Ubuntu only"
@@ -75,7 +86,7 @@ perl -pi -e "s/^-name riak.*$/-sname riak\@`hostname -s`/g" /etc/riak/vm.args
 echo "Configuring /etc/riak/app.config"
 PASS=`grep -o '<Deployment name="[^"]*"' /var/lib/waagent/SharedConfig.xml | cut -d '"' -f 2`
 
-patch -p0 <<EOF >$logfile 2>&1
+patch -p0 <<EOF >>$logfile 2>&1
 --- /etc/riak/app.config        2012-09-26 04:22:11.000000000 +0000
 +++ -   2012-11-07 10:06:49.077155677 +0000
 @@ -1,6 +1,13 @@
@@ -147,9 +158,9 @@ patch -p0 <<EOF >$logfile 2>&1
 EOF
 
 echo "Generating Certificates"
-openssl genrsa -out /etc/riak/key.pem 1024 >$logfile 2>&1
-openssl req -new -key /etc/riak/key.pem -out /etc/riak/csr.pem -subj "/C=/ST=/L=/O=/CN=`hostname`" >$logfile 2>&1
-openssl x509 -req -days 3650 -in /etc/riak/csr.pem -signkey /etc/riak/key.pem -out /etc/riak/cert.pem >$logfile 2>&1
+openssl genrsa -out /etc/riak/key.pem 1024 >>$logfile 2>&1
+openssl req -new -key /etc/riak/key.pem -out /etc/riak/csr.pem -subj "/C=/ST=/L=/O=/CN=`hostname`" >>$logfile 2>&1
+openssl x509 -req -days 3650 -in /etc/riak/csr.pem -signkey /etc/riak/key.pem -out /etc/riak/cert.pem >>$logfile 2>&1
 
 echo "Tuning system"
 cat <<SYSCTL >> /etc/sysctl.conf
@@ -177,7 +188,7 @@ echo 1 > /proc/sys/net/ipv4/tcp_tw_reuse
 if [ "$OS" = "CentOS" ]; then
 
 echo "Enabling Service"
-chkconfig --add riak >$logfile 2>&1
+chkconfig --add riak >>$logfile 2>&1
 echo "Starting Service"
 service riak start
 service riak ping

@@ -35,13 +35,14 @@ You will need to sign up for the Windows Azure Virtual Machines preview feature 
 
 	![](https://raw.github.com/basho/riak_on_azure/1.0/images/createvm.png)
 
-3. Select a CentOS virtual machine image from Platform Images, and then click the next arrow at the bottom right of the page. 
+3. Select a CentOS or Ubuntu virtual machine image from Platform Images, and then click the next arrow at the bottom right of the page. 
 
 	![](https://raw.github.com/basho/riak_on_azure/1.0/images/vmconfiguration0.png)
 
 4. On the VM Configuration page, provide the following information:
 	- Provide a Virtual Machine Name, such as "testlinuxvm".
-	- Specify a New User Name, such as "newuser", which will be added to the Sudoers 	  list file.
+	- Specify a New User Name, such as "newuser", which will be added to the Sudoers list file.
+		- ** Do NOT use the username "Riak" ** as it may conflict with the installation package
 	- In the New Password box, type a strong password.
 	- In the Confirm Password box, retype the password.
 	- Select the appropriate Size from the drop down list.
@@ -71,12 +72,12 @@ Once the virtual machine is created you must configure endpoints in order to rem
 1. In the Management Portal, click Virtual Machines, then click the name of your new VM, then click Endpoints.
 
 2. **If this is the first node**, click Add Endpoint, leave 'Add Endpoint' check and hit the right arrow, and fill out the next form as follows:
-	- Name: riak_web
+	- Name: https
 	- Protocol: leave set to 'TCP'
-	- Public Port: 8098
-	- private Port: 8098
+	- Public Port: 443
+	- Private Port: 8069
 
-#### Connect to CentOS VMs using PuTTY or SSH
+#### Connect to CentOS or Ubuntu VMs using PuTTY or SSH
 
 When the virtual machine has been provisioned and the endpoints configured you can connect to it using SSH or PuTTY.
 
@@ -97,9 +98,9 @@ If you are using a Windows computer, connect to the VM using PuTTY. PuTTY can be
 
 	![](https://raw.github.com/basho/riak_on_azure/1.0/images/putty.png)
 
-#### Configure Centos and Riak using a shell script
+#### Install Riak and configure using a shell script
 
-1. On each node, once you've connected using the steps above:
+1. **On each node**, once you've connected using the steps above:
 
 Execute:
 
@@ -107,32 +108,55 @@ Execute:
 
 	curl -s https://raw.github.com/basho/riak_on_azure/1.0/azure_install_riak.sh | sh
 
-** FOR THE FIRST NODE **, note the "INTERNAL IP ADDRESS" listed on the right in the nodes dashboard.
+#### Configure Riak using Riak Control
 
+You can either use Riak Control or Command Line to add nodes to your Riak Cluster. If you wish to add nodes via the command line, skip down to the section entitled "Cluster Riak using Command Line"
 
-** FOR ALL OTHER NODES **, use the "INTERNAL IP ADDRESS"" of the first node:
+1. Find the dns name, and the "Deployment ID" in the virtual machine dashboard of the VM you created the https endpoint for.
+	-i.e. dns: basho-example.cloudapp.net
+	-i.e. Deployment ID: 7ea145743aeb4402a088da1234567890
+
+2. Visit https://dns-name.cloudapp.net/admin in your browser
+
+3. Ender 'admin' as the username, and the "Deployement ID" as the password.
+
+4. Select 'Cluster' on the left.
+
+5. Add vms which also have the Riak software installed and configured by entering riak@yourhostnamehere in the input box, and clicking 'Add Node'
+	- i.e. riak@basho-centos1
+	- ( Use the short name of each vm, not the DNS name )
+
+You now have a Riak cluster on Azure
+
+#### Configure Riak using Command Line
+
+If you have already followed the instructions in the section "Configure Riak using Riak Control", skip this section.
+
+First, SSH into the second, and subsequent nodes, and on each node:
 
 Execute:
 
-	riak-admin cluster join riak@<ip.of.first.node>
+	riak-admin cluster join riak@yourhostnamehere
 
-#### Cluster Riak & load test data
+( Where 'yourhostnamehere' is the short name of the **first node** in your cluster )
 
-After all the nodes are installed, and joined using the steps above, connect to one of the nodes using SSH or PuTTY and execute the following:
+( NOTE: The host you choose can actually be any host that has already joined the cluster, the first host has no special significance, but it's important not to attempt to join a node that hasn't joined a cluster yet, or else you'll make a second cluster; thus we use the first node for these instructions. )
+
+After all the nodes have have been joined to the first node via the previous command, connect to any of the nodes via SSH or PuTTY and execute the following:
 
 	riak-admin cluster plan
 
-If this looks good:
+Verify all the nodes are listed as expected, If this looks good:
 
 	riak-admin cluster commit
 
 To check the status of clustering use:
 
-	riak-admin member_status
+	riak-admin member-status
 
 You now have a Riak cluster on Azure
 
-##### Load test data
+#### Load test data
 
 Execute on any one of the nodes:
 

@@ -36,9 +36,6 @@ logfile=riak_install.log
 
 OS=`lsb_release -si`
 
-mkdir /mnt/resource/riak
-ln -s /mnt/resource/riak /var/lib/riak
-
 echo "Setting limits"
 ulimit -n 65536
 
@@ -78,8 +75,6 @@ else
 	exit 1
 fi
 
-chown -R riak:riak /mnt/resource/riak
-
 echo "Configuring /etc/riak/vm.args"
 perl -pi -e "s/^-name riak.*$/-sname riak\@`hostname -s`/g" /etc/riak/vm.args
 
@@ -87,43 +82,29 @@ echo "Configuring /etc/riak/app.config"
 PASS=`grep -o '<Deployment name="[^"]*"' /var/lib/waagent/SharedConfig.xml | cut -d '"' -f 2`
 
 patch -p0 <<EOF >>$logfile 2>&1
---- /etc/riak/app.config        2012-09-26 04:22:11.000000000 +0000
-+++ -   2012-11-07 10:06:49.077155677 +0000
-@@ -1,6 +1,13 @@
- %% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
- %% ex: ft=erlang ts=4 sw=4 et
- [
-+ %% Port limitations for firewall configuration.
-+ { kernel, 
-+           [
-+               {inet_dist_listen_min, 6000},
-+               {inet_dist_listen_max, 7999}
-+           ]},
-+
-  %% Riak Client APIs config
-  {riak_api, [
-             %% pb_backlog is the maximum length to which the queue of pending
-@@ -12,7 +19,7 @@
-
-             %% pb_ip is the IP address that the Riak Protocol Buffers interface
-             %% will bind to.  If this is undefined, the interface will not run.
--            {pb_ip,   "127.0.0.1" },
-+            {pb_ip,   "0.0.0.0" },
-
-             %% pb_port is the TCP port that the Riak Protocol Buffers interface
-             %% will bind to
-@@ -30,18 +37,18 @@
-
+--- /etc/riak/app.config  2014-02-26 22:54:56.706534700 +0000
++++ - 2014-02-26 22:57:06.104057502 +0000
+@@ -12,7 +12,7 @@
+              
+             %% pb is a list of IP addresses and TCP ports that the Riak 
+             %% Protocol Buffers interface will bind.
+-            {pb, [ {"127.0.0.1", 8087 } ]}
++            {pb, [ {"0.0.0.0", 8087 } ]}
+             ]},
+ 
+  %% Riak Core config
+@@ -26,18 +26,18 @@
+ 
                %% http is a list of IP addresses and TCP ports that the Riak
                %% HTTP interface will bind.
 -              {http, [ {"127.0.0.1", 8098 } ]},
-+              {http, [{"0.0.0.0",8098}]},
-
++              {http, [ {"0.0.0.0", 8098 } ]},
+ 
                %% https is a list of IP addresses and TCP ports that the Riak
                %% HTTPS interface will bind.
 -              %{https, [{ "127.0.0.1", 8098 }]},
-+              {https, [{ "0.0.0.0", 8069 }]},
-
++              {https, [{ "0.0.0.0", 8443 }]},
+ 
                %% Default cert and key locations for https can be overridden
                %% with the ssl config variable, for example:
 -              %{ssl, [
@@ -134,26 +115,26 @@ patch -p0 <<EOF >>$logfile 2>&1
 +                     {certfile, "/etc/riak/cert.pem"},
 +                     {keyfile, "/etc/riak/key.pem"}
 +                    ]},
-
+ 
                %% riak_handoff_port is the TCP port that Riak uses for
                %% intra-cluster data handoff.
-@@ -266,7 +273,7 @@
+@@ -324,7 +324,7 @@
   %% riak_control config
   {riak_control, [
                  %% Set to false to disable the admin panel.
 -                {enabled, false},
 +                {enabled, true},
-
+ 
                  %% Authentication style used for access to the admin
                  %% panel. Valid styles are 'userlist' <TODO>.
-@@ -275,7 +282,7 @@
+@@ -333,7 +333,7 @@
                  %% If auth is set to 'userlist' then this is the
                  %% list of usernames and passwords for access to the
                  %% admin panel.
 -                {userlist, [{"user", "pass"}
-+                {userlist, [{"admin", "$PASS"}
++                {userlist, [{"admin", "%PASSWORD%"}
                             ]},
-
+ 
                  %% The admin panel is broken up into multiple
 EOF
 
